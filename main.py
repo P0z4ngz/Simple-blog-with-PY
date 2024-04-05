@@ -107,7 +107,6 @@ def register():
         return redirect(url_for("get_all_posts"))
     return render_template("register.html", form=form, current_user=current_user)
 
-# TODO: Retrieve a user from the database based on their email. 
 @app.route('/login', methods=["GET", "POST"])
 def login():
     form = LoginForm()
@@ -137,7 +136,6 @@ def get_all_posts():
     posts = result.scalars().all()
     return render_template("index.html", all_posts=posts)
 
-# TODO: Allow logged-in users to comment on posts
 @app.route("/post/<int:post_id>", methods=["GET", "POST"])
 def show_post(post_id):
     form = CommentForm()
@@ -202,6 +200,15 @@ def delete_post(post_id):
     db.session.delete(post_to_delete)
     db.session.commit()
     return redirect(url_for('get_all_posts'))
+
+@app.route('/delete-comment/<int:comment_id>')
+@admin_only
+def delete_comment(comment_id):
+    get_comment = db.get_or_404(Comment, comment_id)
+    post_id = get_comment.parent_post.id
+    db.session.delete(get_comment)
+    db.session.commit()
+    return redirect(url_for('show_post', post_id=post_id))
 
 @app.route("/about")
 def about():
