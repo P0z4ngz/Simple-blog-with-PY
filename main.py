@@ -10,9 +10,10 @@ from sqlalchemy import Integer, String, Text
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from forms import CreatePostForm, LoginForm, RegisterAccForm, CommentForm
+import os
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
+app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 ckeditor = CKEditor(app)
 Bootstrap5(app)
 
@@ -27,7 +28,7 @@ def load_user(user_id):
 # CREATE DATABASE
 class Base(DeclarativeBase):
     pass
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("SQLALCHEMY_DATABASE_URI")
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
 
